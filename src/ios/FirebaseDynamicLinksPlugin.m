@@ -9,19 +9,23 @@
         [FIRApp configure];
     }
 
-    self.domainUriPrefix = [self.commandDelegate.settings objectForKey:[@"DYNAMIC_LINK_URIPREFIX" lowercaseString]];
+    self.domainUriPrefix = [self.commandDelegate.settings objectForKey:[@"DOMAIN_URI_PREFIX" lowercaseString]];
+}
+
+- (void)getDynamicLink:(CDVInvokedUrlCommand *)command {
+    CDVPluginResult *pluginResult;
+    if (self.lastDynamicLinkData) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:self.lastDynamicLinkData];
+
+        self.lastDynamicLinkData = nil;
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:nil];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 - (void)onDynamicLink:(CDVInvokedUrlCommand *)command {
     self.dynamicLinkCallbackId = command.callbackId;
-
-    if (self.lastDynamicLinkData) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:self.lastDynamicLinkData];
-        [pluginResult setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.dynamicLinkCallbackId];
-
-        self.lastDynamicLinkData = nil;
-    }
 }
 
 - (void)createDynamicLink:(CDVInvokedUrlCommand *)command {

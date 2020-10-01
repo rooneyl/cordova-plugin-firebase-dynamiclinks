@@ -40,7 +40,7 @@
     // parse firebase dynamic link
     FIRDynamicLink *dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
     if (dynamicLink) {
-        [dl postDynamicLink:dynamicLink];
+        if(dynamicLink.url) [dl postDynamicLink:dynamicLink];
         handled = TRUE;
     }
     return handled;
